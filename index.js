@@ -38,9 +38,9 @@ async function run() {
         })
         // get task
         app.get('/createTask', async (req, res) => {
-            const {email}=req.query;
+            const { email } = req.query;
             console.log(email)
-            const query={email:email}
+            const query = { email: email }
             const result = await taskDB.find(query).toArray()
 
             console.log(result)
@@ -49,9 +49,31 @@ async function run() {
         //delete task
         app.delete('/createTask/:id', async (req, res) => {
             const id = req.params.id
-            const query={_id:new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
 
-            const result=await taskDB.deleteOne(query)
+            const result = await taskDB.deleteOne(query)
+            res.send(result)
+        })
+        //update task
+        app.put('/createTask', async (req, res) => {
+            const task = req.body
+            const id=task._id
+            console.log(task)
+            console.log(id)
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            console.log(task)
+            const updateDoc = {
+                $set: {
+                    deadline: task.deadline,
+                    description: task.description,
+                    priority: task.priority,
+                    title: task.title
+
+                },
+            };
+            const result = await taskDB.updateOne(filter, updateDoc, options);
+            // const result=await taskDB.deleteOne(query)
             res.send(result)
         })
 
